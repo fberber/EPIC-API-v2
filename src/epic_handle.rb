@@ -150,13 +150,25 @@ module EPIC
       begin
         @values = nil
         if self.empty?
-          Profile.profiles.each do
-            |profile_name, profile|
-            if tmp = profile.create( request, self.prefix, self.suffix, new_values )
-               Debugger.instance.debug("epic_handle.rb:#{__LINE__}:Profile #{profile_name} enforced for Creating Handle.")
+          Debugger.instance.debug("epic_handle.rb:#{__LINE__}:OPOP_PROFILEE ")
+          static_profiles,op_profiles = Profile.get_institute_profiles(self.prefix)
+         op_profiles.each do |profile|
+               puts "epic_handle.rb.profiles = "+profile.to_s
+               Debugger.instance.debug("epic_handle.rb:#{__LINE__}:THE PROFILE #{profile.to_s} enforced for Creating Handle.")
+
+             if tmp = profile.create( request, self.prefix, self.suffix, new_values )
+               Debugger.instance.debug("epic_handle.rb:#{__LINE__}:Profile #{profile.to_s} enforced for Creating Handle.")
                new_values = tmp
             end
-          end
+	 end
+       
+  # Profile.profiles.each do
+   #         |profile_name, profile|
+    #       if tmp = profile.create( request, self.prefix, self.suffix, new_values )
+     #          Debugger.instance.debug("epic_handle.rb:#{__LINE__}:Profile #{profile_name} enforced for Creating Handle.")
+      #         new_values = tmp
+       #     end
+       #  end
           HS.create_handle(self.handle, new_values, request.env['REMOTE_USER'])
           Debugger.instance.debug("epic_handle.rb:#{__LINE__}:Handle created | PUT")
           accept_keys = request.accept.keys

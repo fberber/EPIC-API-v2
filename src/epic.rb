@@ -15,6 +15,7 @@
 #require 'epic_monkeypatches.rb'
 
 # Require all the resources served by this Resource Factory:
+
 require 'epic_handle.rb'
 require 'epic_handles.rb'
 require 'epic_handlevalue.rb'
@@ -26,6 +27,7 @@ require 'epic_version.rb'
 require 'epic_debugger.rb'
 require '../config.rb'
 require '../secrets/users.rb'
+require 'epic_resolved_handle.rb'
 require 'singleton'
 
 # @todo Documentation
@@ -85,6 +87,11 @@ module EPIC
           #~ 'batches/'
         ]
         )
+      elsif 'resolve' === segments[0]
+          if 3 === n
+            Debugger.instance.debug("epic.rb:#{__LINE__}:RESOLVE a handle | GET")
+            ResolvedHandle.new path
+          end
       elsif 'handles' === segments[0]
         if 1 === n
           Debugger.instance.debug("epic.rb:#{__LINE__}:GET all prefixes in system | GET")

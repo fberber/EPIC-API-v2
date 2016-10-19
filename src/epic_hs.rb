@@ -296,7 +296,18 @@ class << self
     end
     AUTHINFO[user_name]
   end
+  
+  def resolve_handle handle
+  
+   request = HDLLIB::ResolutionRequest.new(handle.to_java_bytes,nil,nil,nil)
+   response = resolver.processRequest(request)
+   if response.responseCode == 1
+        resolution_response = response.to_java(HDLLIB::ResolutionResponse)
+        handle_values = resolution_response.getHandleValues()
 
+   end
+   handle_values
+  end
 
   # Create a Handle
   # @param handle [#to_s]

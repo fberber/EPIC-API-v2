@@ -16,6 +16,7 @@
 require 'epic_debugger.rb'
 require 'sequel'
 require 'singleton'
+require 'digest/md5'
 
 module EPIC
 
@@ -143,6 +144,28 @@ class DB
   end
 
 
+ def check_url_existence url
+    unique_url = true
+    url_hash = Digest::MD5.hexdigest(url)
+
+    Debugger.instance.debug("epic_sequel.rb:#{__LINE__}:check_url_existence")
+    begin
+      self.check_and_reconnect
+      myquery = self.pool["INSERT INTO urlhash (hash,url) VALUES ('#{url_hash}','#{url}')"].insert
+      Debugger.instance.debug("epic_sequel.rb:#{__LINE__}:checked_url_existence!!!")
+    rescue Exception => e
+      error_str = e.to_s
+      if error_str.include? "Duplicate"
+          unique_url = false    
+      else
+         Debugger.instance.log(e.to_s)
+         abort("DATABASE ERROR")
+     end
+    end
+    unique_url
+  end
+   
+
   def all_handle_values handle
     Debugger.instance.debug("epic_sequel.rb:#{__LINE__}:all_handle_values")
     begin
@@ -164,7 +187,7 @@ class DB
       Debugger.instance.debug("epic_sequel.rb:#{__LINE__}:Extracting UUID: #{returnvalue} from database")
     returnvalue
   end
-
+   
 
   # @return [Fixnum]
   def gwdgpidsequence
